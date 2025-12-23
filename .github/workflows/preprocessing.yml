@@ -1,0 +1,44 @@
+name: Automate Preprocessing
+
+# Kapan robot ini bekerja? Setiap kali kita upload (push) kode baru.
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Izin supaya robot boleh update file (penting!)
+
+    steps:
+    # 1. Ambil kodingan kita dari repository
+    - uses: actions/checkout@v4
+
+    # 2. Siapkan Python
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.9"
+
+    # 3. Install alat-alat (Pandas, dll)
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # 4. Jalankan script Automate punya ROSI
+    # Pastikan nama filenya SESUAI dengan file python kamu
+    - name: Run Preprocessing Script
+      run: python automate_rosi_mustika.py
+
+    # 5. Simpan hasilnya (Commit & Push balik ke GitHub)
+    # Ini syarat "mengembalikan dataset terbaru"
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        git add preprocessing/loan_approval_preprocessing
+        git commit -m "Auto-update: Dataset processed by GitHub Action" || echo "No changes to commit"
+        git push
