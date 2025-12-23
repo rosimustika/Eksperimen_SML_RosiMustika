@@ -30,7 +30,7 @@ jobs:
 
     # 4. Jalankan script Automate
     - name: Run Preprocessing Script
-      run: python automate_rosi_mustika.py
+      run: python prepocessing/automate_rosi_mustika.py
 
     # 5. Simpan hasilnya
     - name: Commit and Push changes
